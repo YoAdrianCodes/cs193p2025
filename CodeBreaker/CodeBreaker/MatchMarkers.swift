@@ -14,6 +14,7 @@ enum Match {
     case nomatch
     
 }
+//inexact meaning, right color wrong positioning
 
 struct MatchMarkers: View {
     var matches: [Match]
@@ -28,6 +29,7 @@ struct MatchMarkers: View {
                     matchMarker(peg: 2)
                     matchMarker(peg: 3)
                 }
+                
             }
         }
     
@@ -43,5 +45,5 @@ struct MatchMarkers: View {
 }
 
 #Preview {
-    MatchMarkers(matches: [.exact, .inexact, .nomatch])
+    MatchMarkers(matches: [.exact, .nomatch, .inexact, .exact])
 }
