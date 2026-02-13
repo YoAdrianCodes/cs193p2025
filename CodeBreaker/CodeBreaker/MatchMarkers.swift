@@ -17,7 +17,8 @@ enum Match {
 //inexact meaning, right color wrong positioning
 
 struct MatchMarkers: View {
-    var matches: [Match]
+    // data in
+    let matches: [Match]
     
     var body: some View {
             HStack {
@@ -45,5 +46,5 @@ struct MatchMarkers: View {
 }
 
 #Preview {
-    MatchMarkers(matches: [.exact, .nomatch, .inexact, .exact])
+    MatchMarkers(matches: [.exact, .inexact, .inexact, .exact])
 }
