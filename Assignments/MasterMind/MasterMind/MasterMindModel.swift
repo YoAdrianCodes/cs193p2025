@@ -22,8 +22,13 @@ struct MasterMindModel {
     
     mutating func attemptGuess(){
         var attempt = guess
-        attempt.kind = .attempt(guess.match(against: masterCode))
-        attempts.append(attempt)
+        let missingCount = attempt.pegs.filter { $0 == Code.missing}.count
+        let pastPegAttempts = attempts.map { $0.pegs }
+        let duplicateGuess: Bool = pastPegAttempts.contains(guess.pegs)
+        if missingCount == 0 && duplicateGuess != true {
+            attempt.kind = .attempt(guess.match(against: masterCode))
+            attempts.append(attempt)
+        }
     }
     
     mutating func changeGuessPeg(at index: Int){
