@@ -19,6 +19,7 @@ struct MasterMindView: View {
                     view(for: game.attempts[index])
                 }
             }
+            restartButton
         }
         .padding()
     }
@@ -31,6 +32,17 @@ struct MasterMindView: View {
         }
         .font(.system(size: 80))
         .minimumScaleFactor(0.1)
+    }
+
+    var restartButton: some View {
+        Button("Restart Game"){
+            restart()
+        }
+        .font(.system(size: 25))
+    }
+    
+    func restart(){
+        game = MasterMindModel(pegChoices: [.blue, .green, .red, .yellow])
     }
 
     func view(for code: Code) -> some View {
