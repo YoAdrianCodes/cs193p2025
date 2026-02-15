@@ -14,7 +14,7 @@ struct MasterMindModel {
     var attempts: [Code] = [Code]()
     var pegChoices: [Peg]
     
-    init(pegChoices: [Peg] = [.red, .yellow, .blue, .green]){
+    init(pegChoices: [Peg]){
         self.pegChoices = pegChoices
         masterCode.randomize(from: pegChoices)
         print(masterCode)
@@ -43,8 +43,9 @@ struct MasterMindModel {
 }
 
 struct Code {
+    static var randomLength = Int.random(in: 3...6)
     var kind: Kind
-    var pegs: [Peg] = Array(repeating: Code.missing, count: 4)
+    var pegs: [Peg] = Array(repeating: Code.missing, count: randomLength)
     
     static var missing = Peg.clear
     

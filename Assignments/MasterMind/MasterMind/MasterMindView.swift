@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct MasterMindView: View {
-    @State var game = MasterMindModel(pegChoices: [.blue, .green, .red, .yellow])
+    static var pegss: [Peg] = Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
+    @State var game = MasterMindModel(pegChoices: pegss)
+    
+    static func generateRandomNumOfPegs() -> [Peg]{
+        return Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
+    }
     
     var body: some View {
         VStack {
@@ -42,7 +47,7 @@ struct MasterMindView: View {
     }
     
     func restart(){
-        game = MasterMindModel(pegChoices: [.blue, .green, .red, .yellow])
+        game = MasterMindModel(pegChoices: MasterMindView.pegss)
     }
 
     func view(for code: Code) -> some View {
