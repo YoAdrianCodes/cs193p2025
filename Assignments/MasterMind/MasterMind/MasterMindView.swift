@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct MasterMindView: View {
-    static var pegss: [Peg] = Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
-    @State var game = MasterMindModel(pegChoices: pegss)
-    
-    static func generateRandomNumOfPegs() -> [Peg]{
-        return Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
-    }
+    static var randomNumberOfPegs: [Peg] = Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
+    @State var emojiGame: Bool = false
+    @State var game = MasterMindModel(pegChoices: randomNumberOfPegs)
     
     var body: some View {
         VStack {
@@ -25,6 +22,7 @@ struct MasterMindView: View {
                 }
             }
             restartButton
+            gameSwitchButton
         }
         .padding()
     }
@@ -45,9 +43,21 @@ struct MasterMindView: View {
         }
         .font(.system(size: 25))
     }
+    var gameSwitchButton: some View {
+        emojiGame
+        ? Button("Switch Game: Circle") {
+            emojiGame = false
+                restart()
+            }
+            .font(.system(size: 25))
+        : Button("Switch Game: Emoji") {
+            emojiGame = true
+            }
+            .font(.system(size: 25))
+    }
     
     func restart(){
-        game = MasterMindModel(pegChoices: MasterMindView.pegss)
+        game = MasterMindModel(pegChoices: MasterMindView.randomNumberOfPegs)
     }
 
     func view(for code: Code) -> some View {
