@@ -8,21 +8,25 @@
 import SwiftUI
 
 struct MasterMindView: View {
-    static var randomNumberOfPegs: [Peg] = Array([.red, .yellow, .blue, .green, .purple, .black].prefix(Code.randomLength))
-    @State var emojiGame: Bool = false
-    @State var game = MasterMindModel(pegChoices: randomNumberOfPegs)
+    @State private var game = MasterMindModel(pegChoices: [.red, .yellow, .blue, .green])
+    @State private var selection = 0
     
     var body: some View {
         VStack {
-            view(for: game.masterCode)
             ScrollView {
-                view(for: game.guess)
+                view(for: game.masterCode)
+                if !game.isOver {
+                    view(for: game.guess)
+                }
                 ForEach(game.attempts.indices.reversed(), id: \.self) { index in
                     view(for: game.attempts[index])
                 }
             }
+            PegChooser(choices: game.pegChoices){ peg in
+                game.setGuessPeg(peg, at: selection)
+                selection = (selection + 1) % game.masterCode.pegs.count
+            }
             restartButton
-            gameSwitchButton
         }
         .padding()
     }
@@ -43,46 +47,22 @@ struct MasterMindView: View {
         }
         .font(.system(size: 25))
     }
-    var gameSwitchButton: some View {
-        emojiGame
-        ? Button("Switch Game: Circle") {
-            emojiGame = false
-                restart()
-            }
-            .font(.system(size: 25))
-        : Button("Switch Game: Emoji") {
-            emojiGame = true
-            }
-            .font(.system(size: 25))
-    }
     
     func restart(){
-        game = MasterMindModel(pegChoices: MasterMindView.randomNumberOfPegs)
+        game = MasterMindModel(pegChoices: [.red, .yellow, .blue, .green])
     }
 
     func view(for code: Code) -> some View {
         HStack {
-            ForEach(code.pegs.indices, id: \.self){ index in
-                Circle()
-                    .overlay {
-                        if code.pegs[index] == Code.missing {
-                            Circle()
-                                .strokeBorder(Color.gray)
-                        }
-                    }
-                    .contentShape(/*@START_MENU_TOKEN@*/Circle()/*@END_MENU_TOKEN@*/)
-                    .aspectRatio(1, contentMode: .fit)
-                    .foregroundColor(code.pegs[index])
-                    .onTapGesture {
-                        if code.kind == .guess {
-                            game.changeGuessPeg(at: index)
-                        }
-                    }
-            }
-            MatchMarkers(matches: code.matches)
+            CodeView(code: code, selection: $selection)
+            Rectangle().foregroundColor(Color.clear).aspectRatio(contentMode: .fit)
                 .overlay {
-                    if code.kind == .guess {
-                        guessButton
+                    if let matches = code.matches {
+                        MatchMarkers(matches: matches)
+                    } else {
+                        if code.kind == .guess {
+                            guessButton
+                        }
                     }
                 }
         }
