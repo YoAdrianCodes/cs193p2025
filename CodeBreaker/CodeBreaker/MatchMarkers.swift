@@ -17,9 +17,10 @@ enum Match {
 //inexact meaning, right color wrong positioning
 
 struct MatchMarkers: View {
-    // data in
+    // MARK: Data In
     let matches: [Match]
     
+    // MARK: - Body
     var body: some View {
             HStack {
                 VStack {

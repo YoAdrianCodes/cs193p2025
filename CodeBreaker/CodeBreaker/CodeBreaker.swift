@@ -15,10 +15,14 @@ extension Peg {
 typealias Peg = Color
 
 struct CodeBreaker {
-    var masterCode: Code = Code(kind: .master)
+    var masterCode: Code = Code(kind: .master(isHidden: true))
     var guess: Code = Code(kind: .guess)
     var attempts: [Code] = [Code]()
     var pegChoices: [Peg]
+    
+    var isOver: Bool {
+        attempts.last?.pegs == masterCode.pegs
+    }
     
     init(pegChoices: [Peg]){
         masterCode.randomize(from: pegChoices)
@@ -30,6 +34,10 @@ struct CodeBreaker {
         var attempt = guess
         attempt.kind = .attempt(guess.match(against: masterCode))
         attempts.append(attempt)
+        guess.reset()
+        if isOver {
+            masterCode.kind = .master(isHidden: false)
+        }
     }
     
     mutating func changeGuessPeg(at index: Int){
@@ -41,12 +49,25 @@ struct CodeBreaker {
             guess.pegs[index] = pegChoices.first ?? Code.missingPeg
         }
     }
+    
+    mutating func setGuessPeg(_ peg: Peg, at index: Int){
+        guard guess.pegs.indices.contains(index) else { return }
+        guess.pegs[index] = peg
+    }
 }
 
 struct Code {
     static var missingPeg: Peg = .clear
     var kind: Kind
     var pegs: [Peg] = Array(repeating: Peg.missingPeg, count: 4)
+    
+    var isHidden: Bool {
+        switch kind {
+        case .master(let isHidden): return isHidden
+        default: return false
+        }
+    }
+
     var matches: [Match]? {
         switch self.kind {
         case .attempt(let matches): return matches
@@ -55,7 +76,7 @@ struct Code {
     }
     
     enum Kind: Equatable {
-        case master
+        case master(isHidden: Bool)
         case guess
         case attempt([Match])
         case unknown
@@ -88,5 +109,9 @@ struct Code {
                 return exactMatches[index]
             }
         }
+    }
+    
+    mutating func reset() {
+        pegs = Array(repeating: Peg.missingPeg, count: 4)
     }
 }
